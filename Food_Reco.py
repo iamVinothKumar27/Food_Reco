@@ -3,6 +3,7 @@ import pyttsx3
 from langchain.chains import LLMChain
 from langchain.prompts import PromptTemplate
 from langchain_google_genai import ChatGoogleGenerativeAI
+import google.generativeai as genai
 from dotenv import load_dotenv
 import os
 
@@ -10,12 +11,9 @@ import os
 load_dotenv()
 
 app = Flask(__name__)
-
-# Initialize the Google API configuration
-import google.generativeai as genai
 genai.configure(api_key=os.getenv('GOOGLE_API_KEY'))
 
-# Define the prompt template for the generative AI model
+# Define the prompt template
 prompt_template = """
 You are a travel guide. Your tourist is feeling sleepy and also {emotion} around {location} at {time}.
 They are driving a car and need some food to refresh.
@@ -25,13 +23,15 @@ Format the response as:
 "A cup of coffee would make you feel better."
 """
 
-# Initialize the Chat model with Google's generative AI
+# Initialize the Chat model
 model = ChatGoogleGenerativeAI(model="gemini-2.0-flash", temperature=0.7)
 prompt = PromptTemplate(template=prompt_template, input_variables=["emotion", "location", "time"])
 llm_chain = LLMChain(llm=model, prompt=prompt)
 
-# Initialize the Text-to-Speech engine
+# Initialize TTS
 engine = pyttsx3.init()
+mac_voice_id = "com.apple.voice.compact.fr-FR.Thomas"
+engine.setProperty('voice', mac_voice_id)
 engine.setProperty('rate', 145)
 engine.setProperty('volume', 1.0)
 
@@ -53,10 +53,10 @@ def recommend_food():
         "time": time
     }
 
-    # Generate recommendation from the AI model
+    # Get recommendation from AI
     recommendation = llm_chain.run(inputs)
 
-    # Convert the recommendation to speech using pyttsx3
+    # Speak the recommendation
     engine.say(recommendation)
     engine.runAndWait()
 
