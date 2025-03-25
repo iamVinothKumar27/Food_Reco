@@ -1,8 +1,6 @@
 Flask>=2.1
 langchain==0.3.21
 pyttsx3==2.90
-google-generativeai==0.8.5
+google-generativeai==0.8.4
 langchain-google-genai==2.1.1
-
 python-dotenv==0.19.1
-google.generativeai
