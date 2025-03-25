@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Based Food Recommendation System.!</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <style>
+        body {
+            background-color: black;
+            color: green;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        form {
+            width: 100%;
+            max-width: 400px;
+            margin: 20px;
+            padding: 20px;
+            border: 1px solid green;
+            box-shadow: 0 0 10px 0 green;
+        }
+        input[type="text"], button {
+            width: 100%;
+            padding: 8px;
+            margin: 10px 0;
+            box-sizing: border-box;
+            background-color: #333;
+            border: 1px solid green;
+            color: green;
+            font-size: 16px;
+        }
+        button {
+            background-color: green;
+            color: black;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0f0;
+        }
+        #recommendation {
+            padding: 15px;
+            border: 1px solid green;
+            color: green;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <form id="recoForm">
+        <h1>AI Based Food Recommendation System.!</h1>
+        Emotion: <input type="text" name="emotion" required><br>
+        Location: <input type="text" name="location" required><br>
+        Time (Ex: 9:45 AM , 1:00 PM): <input type="text" name="time" required><br>
+        <button type="button" onclick="submitForm()">Submit</button>
+        <p id="recommendation"></p>
+    </form>
+
+    <script>
+        function submitForm() {
+            var formData = {
+                emotion: document.getElementsByName('emotion')[0].value,
+                location: document.getElementsByName('location')[0].value,
+                time: document.getElementsByName('time')[0].value
+            };
+            fetch('/recommend_food', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            }).then(response => response.json())
+            .then(data => {
+                document.getElementById('recommendation').innerText = data.recommendation;
+            }).catch(error => console.error('Error:', error));
+        }
+    </script>
+</body>
+</html>
