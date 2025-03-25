@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify, render_template
-import pyttsx3
 from dotenv import load_dotenv
 import google.generativeai as genai
+from gtts import gTTS
 import os
 
 # Load environment variables
@@ -9,15 +9,9 @@ load_dotenv()
 
 app = Flask(__name__)
 
-# Configure Gemini
+# Configure Gemini model
 genai.configure(api_key=os.getenv('GOOGLE_API_KEY'))
-model = genai.GenerativeModel("gemini-1.5-flash")  # ✅ recommended and available
-
-
-# Text-to-speech engine
-engine = pyttsx3.init()
-engine.setProperty('rate', 145)
-engine.setProperty('volume', 1.0)
+model = genai.GenerativeModel("gemini-1.5-flash")
 
 @app.route('/')
 def index():
@@ -42,10 +36,15 @@ def recommend_food():
     response = model.generate_content(prompt)
     recommendation = response.text.strip()
 
-    engine.say(recommendation)
-    engine.runAndWait()
+    # Convert to speech with gTTS
+    tts = gTTS(recommendation, lang="en")
+    audio_path = "static/voice.mp3"
+    tts.save(audio_path)
 
-    return jsonify({"recommendation": recommendation})
+    return jsonify({
+        "recommendation": recommendation,
+        "audio_url": "/" + audio_path
+    })
 
 if __name__ == '__main__':
     app.run(debug=True)

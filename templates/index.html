@@ -48,6 +48,9 @@
             color: green;
             text-align: center;
         }
+        audio {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -59,6 +62,9 @@
         <button type="button" onclick="submitForm()">Submit</button>
         <p id="recommendation"></p>
     </form>
+
+    <!-- Hidden audio element to play voice -->
+    <audio id="voicePlayer" controls autoplay></audio>
 
     <script>
         function submitForm() {
@@ -76,6 +82,11 @@
             }).then(response => response.json())
             .then(data => {
                 document.getElementById('recommendation').innerText = data.recommendation;
+
+                // Set the audio source and play
+                const audio = document.getElementById('voicePlayer');
+                audio.src = data.audio_url;  // this should be returned from Flask
+                audio.play();
             }).catch(error => console.error('Error:', error));
         }
     </script>
