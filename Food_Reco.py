@@ -1,8 +1,6 @@
-
 from flask import Flask, request, jsonify, render_template
 from dotenv import load_dotenv
 import google.generativeai as genai
-from gtts import gTTS
 import os
 
 # Load environment variables
@@ -37,17 +35,10 @@ def recommend_food():
     response = model.generate_content(prompt)
     recommendation = response.text.strip()
 
-    # Convert to speech with gTTS
-    tts = gTTS(recommendation, lang="en")
-    audio_path = "static/voice.mp3"
-    tts.save(audio_path)
-
     return jsonify({
-        "recommendation": recommendation,
-        "audio_url": "/" + audio_path
+        "recommendation": recommendation
     })
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5001))
     app.run(host='0.0.0.0', port=port)
-

@@ -49,9 +49,6 @@
             color: green;
             text-align: center;
         }
-        audio {
-            display: none;
-        }
     </style>
 </head>
 <body>
@@ -64,10 +61,13 @@
         <p id="recommendation"></p>
     </form>
 
-    <!-- Hidden audio element to play voice -->
-    <audio id="voicePlayer" controls autoplay></audio>
-
     <script>
+        function speak(text) {
+            const msg = new SpeechSynthesisUtterance(text);
+            msg.lang = "en-US";
+            window.speechSynthesis.speak(msg);
+        }
+
         function submitForm() {
             var formData = {
                 emotion: document.getElementsByName('emotion')[0].value,
@@ -83,11 +83,8 @@
             }).then(response => response.json())
             .then(data => {
                 document.getElementById('recommendation').innerText = data.recommendation;
-            
-                // Force-refresh audio
-                const audio = new Audio(data.audio_url + '?v=' + new Date().getTime());
-                audio.play();
-            }).catch(error => console.error('Error:', error));            
+                speak(data.recommendation); // 🔊 browser speaks it
+            }).catch(error => console.error('Error:', error));
         }
     </script>
 </body>
