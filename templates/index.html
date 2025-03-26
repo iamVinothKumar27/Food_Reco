@@ -82,12 +82,11 @@
             }).then(response => response.json())
             .then(data => {
                 document.getElementById('recommendation').innerText = data.recommendation;
-
-                // Set the audio source and play
-                const audio = document.getElementById('voicePlayer');
-                audio.src = data.audio_url;  // this should be returned from Flask
+            
+                // Force-refresh audio
+                const audio = new Audio(data.audio_url + '?v=' + new Date().getTime());
                 audio.play();
-            }).catch(error => console.error('Error:', error));
+            }).catch(error => console.error('Error:', error));            
         }
     </script>
 </body>
