@@ -63,13 +63,26 @@
 
     <script>
         function speak(text) {
+            // Cancel previous speech
+            window.speechSynthesis.cancel();
+
             const msg = new SpeechSynthesisUtterance(text);
             msg.lang = "en-US";
-            window.speechSynthesis.speak(msg);
+            msg.rate = 1;
+            msg.pitch = 1;
+            msg.volume = 1;
+
+            const speakNow = () => window.speechSynthesis.speak(msg);
+
+            if (window.speechSynthesis.getVoices().length === 0) {
+                window.speechSynthesis.addEventListener('voiceschanged', speakNow);
+            } else {
+                speakNow();
+            }
         }
 
         function submitForm() {
-            var formData = {
+            const formData = {
                 emotion: document.getElementsByName('emotion')[0].value,
                 location: document.getElementsByName('location')[0].value,
                 time: document.getElementsByName('time')[0].value
@@ -83,7 +96,7 @@
             }).then(response => response.json())
             .then(data => {
                 document.getElementById('recommendation').innerText = data.recommendation;
-                speak(data.recommendation); // 🔊 browser speaks it
+                speak(data.recommendation); // 🔊 speak in browser
             }).catch(error => console.error('Error:', error));
         }
     </script>
